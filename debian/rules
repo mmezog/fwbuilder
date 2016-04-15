@@ -7,3 +7,4 @@ DEB_CONFIGURE_SCRIPT := ./autogen.sh
 DEB_CONFIGURE_USER_FLAGS   := --with-qmake=qmake-qt4
 DEB_MAKE_INSTALL_TARGET    := install INSTALL_ROOT=`pwd`/debian/tmp
 DEB_INSTALL_CHANGELOGS_ALL := doc/ChangeLog
+DEB_CLEAN_EXCLUDE := .*\.orig

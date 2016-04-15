@@ -1,3 +1,9 @@
+fwbuilder (5.3.6-1.1~aroth~ppa1) xenial; urgency=medium
+
+  * prepare 5.3.6 for ubuntu
+
+ -- Andreas Roth <aroth@arsoft-online.com>  Fri, 15 Apr 2016 15:00:34 +0200
+
 fwbuilder (5.3.6-1) unstable; urgency=low
   * JunOS fix for /128 netmask on IPv6 issue.
   * JunOS fix ssh password prompt.
