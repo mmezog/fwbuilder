@@ -1,3 +1,9 @@
+fwbuilder (5.3.6-1.2~aroth~ppa1) xenial; urgency=medium
+
+  * merge fixes from https://github.com/TargetHolding/fwbuilder-uninett
+
+ -- Andreas Roth <aroth@arsoft-online.com>  Sun, 02 Oct 2016 12:58:20 +0200
+
 fwbuilder (5.3.6-1.1~aroth~ppa1) xenial; urgency=medium
 
   * prepare 5.3.6 for ubuntu
