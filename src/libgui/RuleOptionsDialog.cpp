@@ -148,6 +148,7 @@ void RuleOptionsDialog::loadFWObject(FWObject *o)
         data.registerOption(m_dialog->ipt_logLevel, ropt,
                              "log_level", logLevels);
         data.registerOption(m_dialog->ipt_nlgroup, ropt,  "ulog_nlgroup");
+        data.registerOption(m_dialog->ipt_nlgroup, ropt,  "nflog_group");
 
         data.registerOption(m_dialog->ipt_limit, ropt,  "limit_value");
         data.registerOption(m_dialog->ipt_limitSuffix, ropt,

@@ -22,10 +22,10 @@
 ## $end_rule
 ## $ssh_management_address    address of the management address used for backup ssh access
 ## $management_interface      the name of the management interface
-## $cprange                   (ULOG --cprange)
-## $nlgroup                   (ULOG --ulog-nlgroup)
-## $qthreshold                (ULOG --ulog-qthreshold)
-## $invalid_match_log_prefix  (ULOG --ulog-prefix  or LOG --log-prefix)
+## $cprange                   (ULOG --cprange / NFLOG --range)
+## $nlgroup                   (ULOG --ulog-nlgroup / NFLOG --nflog-group)
+## $qthreshold                (ULOG --ulog-qthreshold / NFLOG --nflog-threshold)
+## $invalid_match_log_prefix  (ULOG --ulog-prefix, NFLOG --nflog-prefix or LOG --log-prefix)
 ##
 ## Conditional statements use the following variables:
 ##
@@ -118,6 +118,10 @@
 
 {{if use_ulog}}
 {{$begin_rule}} drop_invalid -j ULOG {{if use_nlgroup}}--ulog-nlgroup {{$nlgroup}}{{endif}} {{if use_cprange}}--ulog-cprange {{$cprange}}{{endif}} {{if use_qthreshold}}--ulog-qthreshold {{$qthreshold}}{{endif}} --ulog-prefix {{$invalid_match_log_prefix}}{{$end_rule}}
+{{endif}}
+
+{{if use_nflog}}
+{{$begin_rule}} drop_invalid -j NFLOG {{if use_nlgroup}}--nflog-group {{$nlgroup}}{{endif}} {{if use_cprange}}--nflog-size {{$cprange}}{{endif}} {{if use_qthreshold}}--nflog-threshold {{$qthreshold}}{{endif}} --nflog-prefix {{$invalid_match_log_prefix}}{{$end_rule}}
 {{endif}}
 
 {{if not_use_ulog}}

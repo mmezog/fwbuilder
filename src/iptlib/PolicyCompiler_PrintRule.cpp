@@ -439,12 +439,16 @@ string PolicyCompiler_ipt::PrintRule::_printTarget(PolicyRule *rule)
     if (!ipt_comp->ipv6 && compiler->getCachedFwOpt()->getBool("use_ULOG") &&
          target=="LOG") target="ULOG";
 
+    // NFLOG is the substitute in newer kernels for ULOG and has ipv6 support
+    if (compiler->getCachedFwOpt()->getBool("use_NFLOG") &&
+         target=="LOG") target="NFLOG";
+
     ostr << " -j " << target << " ";
 
     if (target=="REJECT")
       ostr << _printActionOnReject(rule);
 
-    if (target=="LOG" || target=="ULOG")    
+    if (target=="LOG" || target=="ULOG" || target=="NFLOG")
         ostr << _printLogParameters(rule);
     
     if (target=="CONNMARK")
@@ -708,7 +712,26 @@ string PolicyCompiler_ipt::PrintRule::_printLogParameters(PolicyRule *rule)
     bool use_ulog = (!ipt_comp->ipv6 &&
                      compiler->getCachedFwOpt()->getBool("use_ULOG"));
 
-    if (use_ulog)
+	// NFLOG is used in newer kernels instead of ULOG. It's available even for ip6tables
+	bool use_nflog = (compiler->getCachedFwOpt()->getBool("use_NFLOG"));
+
+    if (use_nflog)
+	{
+        s=ruleopt->getStr("nflog_group");
+        if (s.empty())  s=compiler->getCachedFwOpt()->getStr("ulog_nlgroup");
+        if (!s.empty())
+            str << " --nflog-group " << s;
+
+        s=ruleopt->getStr("log_prefix");
+        if (s.empty())  s=compiler->getCachedFwOpt()->getStr("log_prefix");
+        if (!s.empty())
+            str << " --nflog-prefix " << _printLogPrefix(rule, s);
+
+        int r=compiler->getCachedFwOpt()->getInt("ulog_cprange");
+        if (r!=0)  str << " --nflog-size " << r << " ";
+        r=compiler->getCachedFwOpt()->getInt("ulog_qthreshold");
+        if (r!=0)  str << " --nflog-threshold " << r << " ";
+	} else if (use_ulog)
     {
         s=ruleopt->getStr("ulog_nlgroup");
         if (s.empty())  s=compiler->getCachedFwOpt()->getStr("ulog_nlgroup");
@@ -724,7 +747,7 @@ string PolicyCompiler_ipt::PrintRule::_printLogParameters(PolicyRule *rule)
         if (r!=0)  str << " --ulog-cprange " << r << " ";
         r=compiler->getCachedFwOpt()->getInt("ulog_qthreshold");
         if (r!=0)  str << " --ulog-qthreshold " << r << " ";
-    } else
+	} else
     {
         bool   numeric_levels;
         numeric_levels=compiler->getCachedFwOpt()->getBool("use_numeric_log_levels");
@@ -1797,7 +1820,23 @@ string PolicyCompiler_ipt::PrintRule::_printOptionalGlobalRules()
                           _createChain("drop_invalid").c_str());
 
 
-    if (compiler->getCachedFwOpt()->getBool("log_invalid") &&
+	if (compiler->getCachedFwOpt()->getBool("log_invalid") &&
+			compiler->getCachedFwOpt()->getBool("use_NFLOG"))
+	{
+        configlet.setVariable("use_nflog", 1);
+
+        string s = compiler->getCachedFwOpt()->getStr("ulog_nlgroup");
+        configlet.setVariable("use_nlgroup", !s.empty());
+        configlet.setVariable("nlgroup", s.c_str());
+
+        int r = compiler->getCachedFwOpt()->getInt("ulog_cprange");
+        configlet.setVariable("use_cprange", r!=0);
+        configlet.setVariable("cprange", r);
+
+        r = compiler->getCachedFwOpt()->getInt("ulog_qthreshold");
+        configlet.setVariable("use_qthreshold", r!=0);
+        configlet.setVariable("qthreshold", r);
+	} else if (compiler->getCachedFwOpt()->getBool("log_invalid") &&
         !isIPv6 &&
         compiler->getCachedFwOpt()->getBool("use_ULOG"))
     {  

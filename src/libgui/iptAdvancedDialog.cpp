@@ -97,6 +97,7 @@ iptAdvancedDialog::iptAdvancedDialog(QWidget *parent,FWObject *o)
     data.registerOption(m_dialog-> logLevel, fwoptions, "log_level", slm);
 
     data.registerOption(m_dialog->useULOG, fwoptions, "use_ULOG");
+    data.registerOption(m_dialog->useNFLOG, fwoptions, "use_NFLOG");
     data.registerOption(m_dialog->cprange, fwoptions, "ulog_cprange");
     data.registerOption(m_dialog->qthreshold, fwoptions, "ulog_qthreshold");
     data.registerOption(m_dialog->nlgroup, fwoptions, "ulog_nlgroup");
@@ -222,7 +223,7 @@ iptAdvancedDialog::iptAdvancedDialog(QWidget *parent,FWObject *o)
 
 void iptAdvancedDialog::switchLOG_ULOG()
 {
-    m_dialog->useLOG->setChecked(!m_dialog->useULOG->isChecked());
+    m_dialog->useLOG->setChecked(!(m_dialog->useULOG->isChecked() || m_dialog->useNFLOG->isChecked()));
 
     if (m_dialog->useLOG->isChecked())
         m_dialog->logTargetStack->setCurrentIndex(0);

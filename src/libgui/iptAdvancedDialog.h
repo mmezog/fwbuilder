@@ -59,6 +59,9 @@ protected slots:
 public slots:
     virtual void switchLOG_ULOG();
 
+//private slots:
+//    void on_useNFLOG_toggled(bool checked);
+//    void on_useLOG_toggled(bool checked);
 };
 
 #endif // __IPTADVANCEDDIALOG_H
